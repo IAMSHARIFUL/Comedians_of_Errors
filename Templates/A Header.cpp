@@ -1,5 +1,7 @@
 #define FastIO ios::sync_with_stdio(false); cin.tie(0);cout.tie(0)
-#include <ext/pb_ds/assoc_container.hpp> // Common file
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+#include <ext/pb_ds/detail/standard_policies.hpp>
 using namespace __gnu_pbds;
 /*
 find_by_order(k) --> returns iterator to the kth largest element counting from 0
