@@ -197,40 +197,4 @@ void FindAllOccurrenceIndex(vector<char> &str,vector<int>&pos){
         int ind=find_occurrence_index(0,0,str);
         if(ind!=-1) minimum_non_existing_string(ind,str);
     }
-    long long cyclic_occurrence(vector<char> &str){
-        check();
-        int i,j,len;
-        long long ans=0;
-        int n=str.size();
-        set<int> S;
-        set<int>::iterator it;
-        for(i=0,j=0,len=0; i<n*2-1; i++){
-            if(st[j].next.count(str[i%n])){
-                len++;
-                j=st[j].next[str[i%n]];
-            }
-            else{
-                while(j!=-1&&(!st[j].next.count(str[i%n]))){
-                    j=st[j].link;
-                }
-                if(j!=-1){
-                    len=st[j].len+1;
-                    j=st[j].next[str[i%n]];
-                }
-                else{
-                    len=0;
-                    j=0;
-                }
-            }
-            while(st[j].link!=-1&&st[st[j].link].len>=n){
-                 j=st[j].link;
-                 len=st[j].len;
-            }
-            if(len>=n) S.insert(j);
-        }
-        for(it=S.begin();it!=S.end();++it){
-            ans=ans+st[*it].endpos;
-        }
-        return ans;
-    }
 };
