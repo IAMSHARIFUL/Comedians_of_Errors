@@ -146,25 +146,9 @@ Polygon RemoveCollinear(const Polygon& poly) {
   }
   return ret;
 }
-Tf signedPolygonArea(const Polygon &p) {
-  Tf ret = 0;
-  for(int i = 0; i < (int) p.size() - 1; i++)
-    ret += cross(p[i]-p[0],  p[i+1]-p[0]);
-  return ret / 2;
-}
+Tf signedPolygonArea(const Polygon &p);
 // returns inside = -1, on = 0, outside = 1
-int pointInPolygon(const Polygon &p, PT o) {
-  using Linear::onSegment; int wn=0, n = p.size();
-  for(int i = 0; i < n; i++) {
-    int j = (i + 1) % n; if(onSegment(o,
-      Segment(p[i], p[j])) || o == p[i]) return 0;
-    int k = dcmp(cross(p[j] - p[i], o - p[i]));
-    int d1=dcmp(p[i].y-o.y), d2=dcmp(p[j].y-o.y);
-    if(k > 0 && d1 <= 0 && d2 > 0) wn++;
-    if(k < 0 && d2 <= 0 && d1 > 0) wn--;
-  }
-  return wn ? -1 : 1;
-}
+int pointInPolygon(const Polygon &p, PT o);
 // returns (longest segment, total length)
 pair<Tf, Tf> linePolygonIntersection(Line l,
                               const Polygon &p) {
@@ -252,23 +236,7 @@ bool pointInTriangle(PT a, PT b, PT c, PT p) {
     && dcmp(cross(c - b, p - b)) >= 0
     && dcmp(cross(a - c, p - c)) >= 0;
 }
-int pointInConvexPolygon(const Polygon &pt, PT p){
-  int n = pt.size(); assert(n >= 3);
-  int lo = 1, hi = n - 1;
-  while(hi - lo > 1) {
-    int mid = (lo + hi) / 2;
-    if(dcmp(cross(pt[mid]-pt[0], p - pt[0])) > 0)
-        lo = mid;
-    else  hi = mid;
-  }
-  bool in=pointInTriangle(pt[0],pt[lo],pt[hi],p);
-  if(!in) return 1;
-  if(dcmp(cross(pt[lo]-pt[lo-1],p-pt[lo-1]))==0)
-    return 0; if(dcmp(cross(pt[hi]-pt[lo],
-    p-pt[lo]))==0) return 0; if(dcmp(cross(pt[hi]-
-    pt[(hi+1)%n], p-pt[(hi+1)%n]))==0) return 0;
-  return -1;
-}
+int pointInConvexPolygon(const Polygon &pt, PT p);
 // most extreme Point in the direction u
 int extremePoint(const Polygon &poly, PT u) {
   int n = (int) poly.size();
@@ -401,14 +369,7 @@ Tf circleTriInterArea(Circle c, Segment s){
     +circleTriInterArea(c,Segment(Sect[0],Sect[1]))
     + circleTriInterArea(c,Segment(Sect[1],s.b));
 }
-Tf circlePolyIntersectionArea(Circle c, Polygon p){
-  Tf res = 0;
-  int n = p.size();
-  for(int i = 0; i < n; ++i)
-    res +=circleTriInterArea(c,
-                   Segment(p[i], p[(i + 1) % n]));
-  return abs(res);
-}
+Tf circlePolyIntersectionArea(Circle c, Polygon p);
 // locates circle c2 relative to c1: intersect = 0
 // inside = -2, inside touch = -1,
 // outside touch = 1, outside = 2
