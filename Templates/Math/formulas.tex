@@ -6,7 +6,13 @@
     \item $1 \binom n 1 + 2 \binom n 2 + \cdots + n \binom n n = n 2^{n-1} $
     \item $\binom n 0 + \binom {n-1} 1 + \cdots + \binom {n-k} k + \cdots + \binom 0 n = F_{n+1} $
 \end{itemize}
-
+\paragraph{Catalan's Triangle}
+\begin{itemize}
+	\item $C(n,0) = 1, n\ge0$.
+	\item $C(n,1) = n, n\ge1$.
+	\item $C(n+1,k) = C(n+1,k-1) + C(n,k), 1 < k < n + 1$.
+	\item $C(n,k) = \binom {n+k} {k} - \binom {n+k} {k-1} = \frac{n-k+1}{n+1}\binom{n+k}{k}$.
+\end{itemize}
 \paragraph{Fibonacci Numbers}
 \begin{itemize}
 	\item $F_{n-1}F_{n+1} - {F_n}^2 = {(-1)}^n $.
