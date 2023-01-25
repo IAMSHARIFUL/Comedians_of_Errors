@@ -1,7 +1,6 @@
 struct node{
     int sum, prop;
-    node(){
-        sum=0, prop=0;}
+    node(){sum=0, prop=0;}
 } st[500000];
 void propagate(int p, int c, int len){   
     st[c].prop+=st[p].prop;
