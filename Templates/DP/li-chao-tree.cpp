@@ -4,19 +4,16 @@ class LiChaoTree{
     bool minimize;
     int lines;
     struct Node{
-        complex<ll> line;
+        pair<ll,ll> line;
         Node *children[2];
-        Node(complex<ll> ln= {0,1000000000000000000}){
+        Node(pair<ll,ll> ln= {0,1000000000000000000}){
             line=ln;
             children[0]=0;
             children[1]=0;
         }
     } *root;
-    ll dot(complex<ll> a, complex<ll> b){
-        return (conj(a) * b).real();
-    }
-    ll f(complex<ll> a,  ll x){
-        return dot(a, {x, 1});
+    ll f(pair<ll,ll> a,  ll x){
+        return a.first*x+a.second;
     }
     void clear(Node* &node){
         if(node->children[0]){
@@ -27,7 +24,7 @@ class LiChaoTree{
         }
         delete node;
     }
-    void add_line(complex<ll> nw, Node* &node, ll l, ll r){
+    void add_line(pair<ll,ll> nw, Node* &node, ll l, ll r){
         if(node==0){
             node=new Node(nw);
             return;

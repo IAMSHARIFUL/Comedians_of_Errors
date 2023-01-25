@@ -3,24 +3,10 @@ const Tf PI = acos(-1), EPS = 1e-9;
 int dcmp(Tf x) {return abs(x)<EPS? 0 :(x<0?-1:1);}
 struct PT {
   Ti x, y;
-  PT(Ti x = 0, Ti y = 0) : x(x), y(y) {}
-  PT operator + (const PT& u) const
-            { return PT(x + u.x, y + u.y); }
-  PT operator - (const PT& u)
-            const { return PT(x - u.x, y - u.y); }
-  PT operator * (const long long u)
-            const { return PT(x * u, y * u); }
-  PT operator * (const Tf u)
-            const { return PT(x * u, y * u); }
-  PT operator / (const Tf u) const
-            { return PT(x / u, y / u); }
   bool operator == (const PT& u) const
        { return dcmp(x-u.x)==0 && dcmp(y-u.y)==0;}
   bool operator != (const PT& u) const
        { return !(*this == u); }
-  bool operator < (const PT& u) const
-       { return dcmp(x-u.x) < 0 ||
-       (dcmp(x-u.x) == 0 && dcmp(y-u.y) < 0);}
   friend istream &operator >> (istream &is, PT &p)
        { return is >> p.x >> p.y; }
   friend ostream &operator << (ostream &os,
@@ -166,27 +152,6 @@ Tf signedPolygonArea(const Polygon &p) {
     ret += cross(p[i]-p[0],  p[i+1]-p[0]);
   return ret / 2;
 }
-///fails if all collinear and remove = TRUE
-Polygon convexHull(Polygon p, bool remRedundant) {
-  int check = remRedundant ? 0 : -1;
-  sort(p.begin(), p.end());
-  p.erase(unique(p.begin(), p.end()), p.end());
-  int n = p.size(); Polygon ch(n+n);
-  int m = 0;    // preparing lower hull
-  for(int i = 0; i < n; i++) {
-    while(m > 1 && dcmp(cross(ch[m - 1]-ch[m - 2],
-                 p[i] - ch[m - 1])) <= check) m--;
-    ch[m++] = p[i];
-  }
-  int k = m;    // preparing upper hull
-  for(int i = n - 2; i >= 0; i--) {
-    while(m > k && dcmp(cross(ch[m - 1] - ch[m-2],
-                 p[i] - ch[m - 2])) <= check) m--;
-    ch[m++] = p[i];
-  }
-  if(n > 1) m--; ch.resize(m);
-  return ch;
-}
 // returns inside = -1, on = 0, outside = 1
 int pointInPolygon(const Polygon &p, PT o) {
   using Linear::onSegment; int wn=0, n = p.size();
@@ -247,21 +212,6 @@ pair<Tf, Tf> linePolygonIntersection(Line l,
 } }  // namespace Polygonal
 ##################################################
 namespace Convex {
-Polygon minkowskiSum(Polygon A, Polygon B){
-  int n = A.size(), m = B.size();
-  rotate(A.begin(),
-        min_element(A.begin(), A.end()), A.end());
-  rotate(B.begin(),
-        min_element(B.begin(), B.end()), B.end());
-  A.push_back(A[0]); B.push_back(B[0]);
-  for(int i = 0; i < n; i++) A[i] = A[i+1] - A[i];
-  for(int i = 0; i < m; i++) B[i] = B[i+1] - B[i];
-  Polygon C(n+m+1); C[0] = A.back() + B.back();
-  merge(A.begin(), A.end()-1, B.begin(),B.end()-1,
-     C.begin()+1, polarComp(PT(0, 0), PT(0, -1)));
-  for(int i=1; i<C.size(); i++) C[i]=C[i]+C[i-1];
-  C.pop_back(); return C;
-}
 //{min area, min perimeter) rectangle containing p
 pair<Tf,Tf>rotatingCalipersBBox(const Polygon &p){
   using Linear::distancePointLine;
@@ -670,76 +620,3 @@ pair<int, int> anyInters(const vector<Segment> &v){
   } return {-1, -1};
 } }
 ##################################################
-namespace HalfPlanar {
-using Linear::lineLineIntersect;
-struct DirLine {
-  PT p, v; Tf ang;
-  DirLine() {}
-  /// Directed line containing point P in the dir v
-  DirLine(PT p, PT v) : p(p), v(v) {
-    ang = atan2(v.y, v.x); }
-  /// Directed Line for ax+by+c >=0
-  DirLine(Tf a, Tf b, Tf c) {
-    assert(dcmp(a) || dcmp(b));
-    p = dcmp(a) ? PT(-c/a, 0) : PT(0,-c/b);
-    v = PT(b, -a); ang = atan2(v.y, v.x);
-  }
-  bool operator<(const DirLine& u) const {
-      return ang < u.ang; }
-  bool onLeft(PT x) const {
-      return dcmp(cross(v, x-p)) >= 0; }
-};
-// region bounded by the left side of dir lines
-// OUTPUT IS UNDEFINED if intersection is unbounded
-// O(n log n) for sorting, O(n) afterwards
-Polygon halfPlaneIntersection(vector<DirLine> li) {
-  int n = li.size(), first = 0, last = 0;
-  sort(li.begin(), li.end());
-  vector<PT> p(n);
-  vector<DirLine> q(n);
-  q[0] = li[0];
-
-  for(int i = 1; i < n; i++) {
-    while(first < last && !li[i].onLeft(p[last-1]))
-        last--;
-    while(first < last && !li[i].onLeft(p[first]))
-        first++;
-    q[++last] = li[i];
-    if(dcmp(cross(q[last].v, q[last-1].v)) == 0) {
-      last--;
-      if(q[last].onLeft(li[i].p)) q[last] = li[i];
-    }
-    if(first < last)
-      lineLineIntersect(q[last-1].p, q[last-1].v,
-               q[last].p, q[last].v, p[last - 1]);
-  }
-
-  while(first<last && !q[first].onLeft(p[last-1]))
-    last--;
-  if(last - first <= 1) return {};
-  lineLineIntersect(q[last].p, q[last].v,
-                q[first].p, q[first].v, p[last]);
-return Polygon(p.begin()+first, p.begin()+last+1);
-}
-
-// O(n^2 lg n) VoronoiDiagram bounded by INF square
-// regions[i] = region with closest =  site[i].
-const Tf INF = 1e10;
-vector<Polygon> voronoi(vector<PT> site, Tf bsq) {
-  int n = site.size();
-  vector<Polygon> region(n);
-  PT A(-bsq, -bsq), B(bsq, -bsq),
-     C(bsq, bsq), D(-bsq, bsq);
-  for(int i = 0; i < n; ++i) {
-    vector<DirLine> li(n - 1);
-    for(int j = 0, k = 0; j < n; ++j) {
-      if(i == j) continue;
-      li[k++] = DirLine((site[i] + site[j]) / 2,
-                     rotate90(site[j] - site[i]));
-    }
-    li.emplace_back(A,B-A); li.emplace_back(B,C-B);
-    li.emplace_back(C,D-C); li.emplace_back(D,A-D);
-    region[i] = halfPlaneIntersection(li);
-  }
-  return region;
-} }
