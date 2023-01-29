@@ -1,7 +1,57 @@
-#define FastIO ios::sync_with_stdio(false); cin.tie(0);cout.tie(0)
+#include <bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
 #include <ext/pb_ds/detail/standard_policies.hpp>
+using namespace std;
+typedef long long ll;
+typedef pair <int, int> pii;
+typedef pair <ll, ll> pll;
+typedef double ftype;
+typedef pair<ftype,ftype> pff;
+#define all(a) a.begin(), a.end()
+#define some(a,l,r) a.begin()+l,a.begin()+(r+1)
+#define csort(a) sort(all(a))
+#define pb push_back
+#define pf push_front
+#define pop pop_back
+#define fi first
+#define se second
+#define in freopen("input.txt","r+",stdin)
+#define out freopen("output.txt","w+",stdout)
+#define dbg(a) cerr<< "line "<<__LINE__ <<" : "<< #a <<" --> "<<(a)<<endl
+#define nl cerr<<endl
+#define fastio ios_base::sync_with_stdio(false);cin.tie(NULL)
+mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+const ftype EPS = 1e-10;
+const ftype PI = acos(-1);
+const int MAX = 3e5+5;
+const int BMAX = 18;
+const int MOD = 1e9+7;
+template < class T1,class T2>
+ostream &operator <<(ostream &os,const pair < T1,T2 > &p)
+{
+    os<<"{"<<p.first<<","<<p.second<<"}";
+    return os;
+}
+template <class T , size_t N>
+ostream &operator <<(ostream &os,const array <T,N> &a)
+{
+	os<<"{";
+	for(auto x: a)
+		os<<x<<" ";
+	os<<"}";
+	return os;
+}
+
+template <class T>
+ostream &operator <<(ostream &os,const vector<T> &a)
+{
+	os<<"{ ";
+	for(auto x: a)
+		os<<x<<" ";
+	os<<"}";
+	return os;
+}
 using namespace __gnu_pbds;
 /*
 find_by_order(k) --> returns iterator to the kth largest element counting from 0
