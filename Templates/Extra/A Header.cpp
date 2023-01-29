@@ -13,7 +13,8 @@ typedef pair<ftype,ftype> pff;
 #define csort(a) sort(all(a))
 #define pb push_back
 #define pf push_front
-#define pop pop_back
+#define pob pop_back
+#define pof pop_front
 #define fi first
 #define se second
 #define in freopen("input.txt","r+",stdin)
