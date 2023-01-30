@@ -38,10 +38,12 @@ struct printer{
 #define stop getchar()
 #define debug() cerr<<"LINE "<<__LINE__<<" >> ", printer()
 #define dbg(x) debug(), "[",#x,": ",(x),"] "
+#define test_handle(T) cin>>T
 #else
 #define dbg(x) ;
 #define infile ;
 #define outfile ;
+#define test_handle(T) T = 1
 #endif
 //Use -DCOMEDIANS in compiler flag in others tab, or remove ifdef
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
