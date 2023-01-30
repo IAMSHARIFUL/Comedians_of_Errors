@@ -17,42 +17,39 @@ typedef pair<ftype,ftype> pff;
 #define pof pop_front
 #define fi first
 #define se second
-#define in freopen("input.txt","r+",stdin)
-#define out freopen("output.txt","w+",stdout)
-#define dbg(a) cerr<< "line "<<__LINE__ <<" : "<< #a <<" --> "<<(a)<<endl
-#define nl cerr<<endl
 #define fastio ios_base::sync_with_stdio(false);cin.tie(NULL)
+#ifdef COMEDIANS
+#define infile ;
+#define outfile ;
+#define Gene template< class
+#define Rics printer& operator,
+Gene c> struct rge{c b, e;};
+Gene c> rge<c> range(c i, c j){ return {i, j};}
+struct printer{
+    ~printer(){cerr<<endl;}
+    Gene c >Rics(c x){ cerr<<boolalpha<<x; return *this;}
+    Rics(string x){cerr<<x;return *this;}
+    Gene c, class d >Rics(pair<c, d> x){ return *this,"(",x.first,", ",x.second,")";}
+    Gene ... d, Gene ...> class c >Rics(c<d...> x){ return *this, range(begin(x), end(x));}
+    Gene c >Rics(rge<c> x){
+        *this,"["; for(auto it = x.b; it != x.e; ++it)
+            *this,(it==x.b?"":", "),*it; return *this,"]";}
+};
+#define stop getchar()
+#define debug() cerr<<"LINE "<<__LINE__<<" >> ", printer()
+#define dbg(x) debug(), "[",#x,": ",(x),"] "
+#else
+#define dbg(x) ;
+#define infile ;
+#define outfile ;
+#endif
+//Use -DCOMEDIANS in compiler flag in others tab, or remove ifdef
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
 const ftype EPS = 1e-10;
 const ftype PI = acos(-1);
 const int MAX = 3e5+5;
 const int BMAX = 18;
 const int MOD = 1e9+7;
-template < class T1,class T2>
-ostream &operator <<(ostream &os,const pair < T1,T2 > &p)
-{
-    os<<"{"<<p.first<<","<<p.second<<"}";
-    return os;
-}
-template <class T , size_t N>
-ostream &operator <<(ostream &os,const array <T,N> &a)
-{
-	os<<"{";
-	for(auto x: a)
-		os<<x<<" ";
-	os<<"}";
-	return os;
-}
-
-template <class T>
-ostream &operator <<(ostream &os,const vector<T> &a)
-{
-	os<<"{ ";
-	for(auto x: a)
-		os<<x<<" ";
-	os<<"}";
-	return os;
-}
 using namespace __gnu_pbds;
 /*
 find_by_order(k) --> returns iterator to the kth largest element counting from 0
