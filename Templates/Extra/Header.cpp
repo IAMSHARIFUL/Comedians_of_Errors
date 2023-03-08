@@ -11,8 +11,8 @@ typedef pair<ftype,ftype> pff;
 #define all(a) a.begin(), a.end()
 #define some(a,l,r) a.begin()+l,a.begin()+(r+1)
 #define csort(a) sort(all(a))
-#define pb push_back
-#define pf push_front
+#define pub push_back
+#define puf push_front
 #define pob pop_back
 #define pof pop_front
 #define fi first
