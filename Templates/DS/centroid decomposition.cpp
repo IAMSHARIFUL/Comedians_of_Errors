@@ -1,21 +1,49 @@
-set<int> g[N];
-int par[N],sub[N],level[N],ans[N]; int DP[LOGN][N];
-int n,m; int nn;
-void dfs1(int u,int p){
-	sub[u]=1; nn++;
-	for(auto it=g[u].begin();it!=g[u].end();it++) if(*it!=p){
-		dfs1(*it,u); sub[u]+=sub[*it];}
+vector<int> tree[sz],ctree[sz];
+int sub[sz],vis[sz],cparent[sz];
+void dfs(int a,int p)
+{
+    sub[a]=1;
+    //printf("loop\n");
+    for(auto v: tree[a]){
+        if(v!=p && vis[v]==0){
+            dfs(v,a);
+            sub[a]+=sub[v];
+        }
+    }
+    //cout<<a<<" "<<sub[a]<<endl;
 }
-int dfs2(int u,int p){
-	for(auto it=g[u].begin();it!=g[u].end();it++)
-		if(*it!=p && sub[*it]>nn/2)
-			return dfs2(*it,u);
-	return u;
+int findCentroid(int a,int p,int num)
+{
+    //printf("loop\n");
+    bool sig=true;
+    while(sig){
+        sig=false;
+        for(auto v: tree[a]){
+            if(v!=p && vis[v]==0 && 2*sub[v]>num){
+                p=a;
+                a=v;
+                sig=true;
+                break;
+            }
+        }
+    }
+
+    return a;
 }
-void decompose(int root,int p){
-	nn=0; dfs1(root,root); int centroid = dfs2(root,root); 
-	if(p==-1)p=centroid; par[centroid]=p;
- for(auto it=g[centroid].begin();it!=g[centroid].end();it++){
-		g[*it].erase(centroid); decompose(*it,centroid); }
-	g[centroid].clear();
+int Decompose(int a,int p,int num)
+{
+    dfs(a,p);
+    int centroid=findCentroid(a,p,num);
+    vis[centroid]=1;
+    //printf("%d\n",centroid);
+    for(auto v: tree[centroid]){
+        if(vis[v]==0){
+        if(sub[v]>sub[centroid])
+            ctree[centroid].pb(Decompose(v,centroid,num-sub[centroid]));
+        else
+            ctree[centroid].pb(Decompose(v,centroid,sub[v]));
+        cparent[ctree[centroid].back()]=centroid;
+        }
+    }
+    return centroid;
 }
