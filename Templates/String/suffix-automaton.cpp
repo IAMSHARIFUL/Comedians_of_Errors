@@ -42,7 +42,7 @@ void set_suffix_links(int node){
         st[node].endpos=
         st[node].endpos+st[st[node].inv_link[i]].endpos; }
 }
-voi output_all_occurrences(int v,int P_length,vector<int>&pos){
+void output_all_occurrences(int v,int P_length,vector<int>&pos){
     if (!st[v].is_clone)
         pos.push_back(st[v].first_pos - P_length + 1);
     for (int u : st[v].inv_link)
