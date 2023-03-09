@@ -1,75 +1,60 @@
-int main() {
-    int n;
-    vector<vector<int>> g(n, vector<int>(n));
-    // reading the graph in the adjacency matrix
-    vector<int> deg(n);
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j)
-            deg[i] += g[i][j];
+class EulerGraph
+{
+public:
+    struct Edge
+    {
+        int other;
+        int oi;
+        bool vis;
+        Edge(int other, int oi): other(other), oi(oi){ vis=false; }
+    };
+
+    vector<vector<Edge>> adj;
+    int* cnt;
+    bool* sig;
+    EulerGraph(int n)
+    {
+        adj.resize(n);
+        cnt=new int[n];
+        sig=new bool[n];
+        memset(cnt, 0, sizeof(int)*n);
+        memset(sig, 0, n);
     }
-    int first = 0;
-    while (first < n && !deg[first])
-        ++first;
-    if (first == n) {
-        cout << -1;
-        return 0;
+
+    void addEdge(int u, int v){
+        int un=adj[u].size(), vn=adj[v].size();
+        adj[u].eb(v, vn), adj[v].eb(u, un);
     }
-    int v1 = -1, v2 = -1;
-    bool bad = false;
-    for (int i = 0; i < n; ++i) {
-        if (deg[i] & 1) {
-            if (v1 == -1)
-                v1 = i;
-            else if (v2 == -1)
-                v2 = i;
-            else
-                bad = true;
-        }
-    }
-    if (v1 != -1)
-        ++g[v1][v2], ++g[v2][v1];
-    stack<int> st;
-    st.push(first);
-    vector<int> res;
-    while (!st.empty()) {
-        int v = st.top();
-        int i;
-        for (i = 0; i < n; ++i)
-            if (g[v][i])
-                break;
-        if (i == n) {
-            res.push_back(v);
-            st.pop();
-        } else {
-            --g[v][i];
-            --g[i][v];
-            st.push(i);
-        }
-    }
-    if (v1 != -1) {
-        for (size_t i = 0; i + 1 < res.size(); ++i) {
-            if ((res[i] == v1 && res[i + 1] == v2) ||
-                (res[i] == v2 && res[i + 1] == v1)) {
-                vector<int> res2;
-                for (size_t j = i + 1; j < res.size(); ++j)
-                    res2.push_back(res[j]);
-                for (size_t j = 1; j <= i; ++j)
-                    res2.push_back(res[j]);
-                res = res2;
-                break;
+
+    deque<int> getCircuit(int src){
+        deque<int> circuit;
+        circuit.push_back(src);
+
+        int ecnt=adj[src].size();
+        while(ecnt){
+            int v=circuit.back();
+            sig[v]=true;
+            if(cnt[v]==adj[v].size()){
+                circuit.pop_back();
+                circuit.push_front(circuit.back());
+            }
+            else if(adj[v][cnt[v]].vis){
+                cnt[v]++;
+                ecnt--;
+            }
+            else {
+                int other=adj[v][cnt[v]].other;
+                int oi=adj[v][cnt[v]].oi;
+                adj[other][oi].vis=true;
+
+                circuit.push_back(other);
+                if(!sig[other]) ecnt+=adj[other].size();
+
+                cnt[v]++;
+                ecnt--;
             }
         }
+        return circuit;
     }
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            if (g[i][j])
-                bad = true;
-        }
-    }
-    if (bad) {
-        cout << -1;
-    } else {
-        for (int x : res)
-            cout << x << " ";
-    }
-}
+
+};
