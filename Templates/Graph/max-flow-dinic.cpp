@@ -5,16 +5,14 @@ int s, t, n, level[N], ptr[N];
 vector<Edge> edges; vector<int> adj[N];
 void init(int nodes) {
   n = nodes; edges.clear();
-  for (int i=0; i<n; i++)  adj[i].clear();
-}
+  for (int i=0; i<n; i++)  adj[i].clear();}
 ///adding undirected edge call addEdge(u,v,c,c);
 int addEdge(int a, int b, LL cap, LL revcap = 0) {
   edges.push_back({a, b, cap, 0});
   edges.push_back({b, a, revcap, 0});
   adj[a].push_back(edges.size()-2);
   adj[b].push_back(edges.size()-1);
-  return edges.size()-2;
-}
+  return edges.size()-2;}
 bool bfs(LL lim) {
   fill(level, level+n, -1); level[s] = 0;
   queue<int> q; q.push(s);
@@ -23,12 +21,8 @@ bool bfs(LL lim) {
     for (int id: adj[v]) {
       Edge e = edges[id];
       if (level[e.to]==-1 && e.cap-e.flow>=lim) {
-        q.push(e.to); level[e.to] = level[v] + 1;
-      }
-    }
-  }
-  return level[t] != -1;
-}
+        q.push(e.to); level[e.to] = level[v] + 1;}}}
+  return level[t] != -1;}
 LL dfs(int v, LL flow) {
   if (v == t || !flow)    return flow;
   for (; ptr[v] < adj[v].size(); ptr[v]++) {
@@ -37,11 +31,8 @@ LL dfs(int v, LL flow) {
     if (level[e.to] != level[v] + 1)  continue;
    if(LL pushed=dfs(e.to,min(flow,e.cap-e.flow))){
       e.flow+=pushed; edges[eid^1].flow -= pushed;
-      return pushed;
-    }
-  }
-  return 0;
-}
+      return pushed;}}
+  return 0;}
 LL maxFlow(int source,int sink,bool SCALING=false){
   s = source, t = sink;
   long long flow = 0;
@@ -49,7 +40,5 @@ LL maxFlow(int source,int sink,bool SCALING=false){
     while (bfs(lim)) {
       fill(ptr, ptr+n, 0);
       while (LL pushed = dfs(s,INF)) flow+=pushed;
-    }
-  }
-  return flow;
-}
+    }}
+  return flow;}
