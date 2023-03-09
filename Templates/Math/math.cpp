@@ -60,3 +60,9 @@ void comp_mult_func(int n){
       }
       mf[i]=mf[k]*mf[i/k];}}
   return;}
+int mu[N];
+void mobius(){
+  memset(mu, -1, sizeof mu); mu[1] = 1;
+  for(int i = 2; i < N; i++)
+    for(int j = (i << 1) ; j < N; j += i)mu[j] -= mu[i];
+}
