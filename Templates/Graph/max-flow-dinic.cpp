@@ -1,85 +1,53 @@
-#include<bits/stdc++.h>
-#include<vector>
-using namespace std;
-#define MAX 100
-#define HUGE_FLOW 1000000000
-#define BEGIN 1
-#define DEFAULT_LEVEL 0
-struct FlowEdge {
-    int v, u;
-    long long cap, flow = 0;
-    FlowEdge(int v, int u, long long cap) : v(v), u(u), cap(cap) {}
-};
-struct Dinic {
-    const long long flow_inf = 1e18;
-    vector<FlowEdge> edges;
-    vector<vector<int>> adj;
-    int n, m = 0;
-    int s, t;
-    vector<int> level, ptr;
-    queue<int> q;
-    Dinic(int n, int s, int t) : n(n), s(s), t(t) {
-        adj.resize(n);
-        level.resize(n);
-        ptr.resize(n);
+struct Edge { int frm, to; LL cap, flow; };
+int s, t, n, level[N], ptr[N];
+vector<Edge> edges; vector<int> adj[N];
+void init(int nodes) {
+  n = nodes; edges.clear();
+  for (int i=0; i<n; i++)  adj[i].clear();
+}
+///adding undirected edge call addEdge(u,v,c,c);
+int addEdge(int a, int b, LL cap, LL revcap = 0) {
+  edges.push_back({a, b, cap, 0});
+  edges.push_back({b, a, revcap, 0});
+  adj[a].push_back(edges.size()-2);
+  adj[b].push_back(edges.size()-1);
+  return edges.size()-2;
+}
+bool bfs(LL lim) {
+  fill(level, level+n, -1); level[s] = 0;
+  queue<int> q; q.push(s);
+  while (!q.empty() && level[t] == -1) {
+    int v = q.front(); q.pop();
+    for (int id: adj[v]) {
+      Edge e = edges[id];
+      if (level[e.to]==-1 && e.cap-e.flow>=lim) {
+        q.push(e.to); level[e.to] = level[v] + 1;
+      }
     }
-    void add_edge(int v, int u, long long cap) {
-        edges.emplace_back(v, u, cap);
-        edges.emplace_back(u, v, 0);
-        adj[v].push_back(m);
-        adj[u].push_back(m + 1);
-        m += 2;
+  }
+  return level[t] != -1;
+}
+LL dfs(int v, LL flow) {
+  if (v == t || !flow)    return flow;
+  for (; ptr[v] < adj[v].size(); ptr[v]++) {
+    int eid = adj[v][ptr[v]];
+    Edge &e = edges[eid];
+    if (level[e.to] != level[v] + 1)  continue;
+   if(LL pushed=dfs(e.to,min(flow,e.cap-e.flow))){
+      e.flow+=pushed; edges[eid^1].flow -= pushed;
+      return pushed;
     }
-    bool bfs() {
-        while (!q.empty()) {
-            int v = q.front();
-            q.pop();
-            for (int id : adj[v]) {
-                if (edges[id].cap - edges[id].flow < 1)
-                    continue;
-                if (level[edges[id].u] != -1)
-                    continue;
-                level[edges[id].u] = level[v] + 1;
-                q.push(edges[id].u);
-            }
-        }
-        return level[t] != -1;
+  }
+  return 0;
+}
+LL maxFlow(int source,int sink,bool SCALING=false){
+  s = source, t = sink;
+  long long flow = 0;
+  for (LL lim=SCALING?(1LL<<K):1; lim>0; lim>>=1){
+    while (bfs(lim)) {
+      fill(ptr, ptr+n, 0);
+      while (LL pushed = dfs(s,INF)) flow+=pushed;
     }
-    long long dfs(int v, long long pushed) {
-        if (pushed == 0)
-            return 0;
-        if (v == t)
-            return pushed;
-        for (int& cid = ptr[v]; cid < (int)adj[v].size(); cid++) {
-            int id = adj[v][cid];
-            int u = edges[id].u;
-            if (level[v] + 1 != level[u] || edges[id].cap - edges[id].flow < 1)
-                continue;
-            long long tr = dfs(u, min(pushed, edges[id].cap - edges[id].flow));
-            if (tr == 0)
-                continue;
-            edges[id].flow += tr;
-            edges[id ^ 1].flow -= tr;
-            return tr;
-        }
-        return 0;
-    }
-    long long flow() {
-        long long f = 0;
-        while (true) {
-            fill(level.begin(), level.end(), -1);
-            level[s] = 0;
-            q.push(s);
-            if (!bfs())
-                break;
-            fill(ptr.begin(), ptr.end(), 0);
-            while (long long pushed = dfs(s, flow_inf)) {
-                f += pushed;
-            }
-        }
-        return f;
-    }
-};
-int main(){
-    return 0;
+  }
+  return flow;
 }
