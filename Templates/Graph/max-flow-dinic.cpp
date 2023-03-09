@@ -1,3 +1,5 @@
+namespace Dinic {     typedef long long LL;
+const int N = 2e4+100, K = 60; const LL INF = 1e18;
 struct Edge { int frm, to; LL cap, flow; };
 int s, t, n, level[N], ptr[N];
 vector<Edge> edges; vector<int> adj[N];
