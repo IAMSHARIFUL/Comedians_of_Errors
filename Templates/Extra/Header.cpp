@@ -106,3 +106,7 @@ for i in $(seq 1 "$4") ; do
         exit
     fi
 done
+//generate all submask
+int s = m;
+while (s > 0) {
+ s = (s-1) & m;}
