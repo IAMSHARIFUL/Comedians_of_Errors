@@ -39,11 +39,24 @@ struct printer{
 #define debug() cerr<<"LINE "<<__LINE__<<" >> ", printer()
 #define dbg(x) debug(), "[",#x,": ",(x),"] "
 #define test_handle(T) cin>>T
+
+void err(istream_iterator<string> it) {cout<<endl;}
+ template<typename T, typename... Args>
+ void err(istream_iterator<string> it, T a, Args... args){
+  cout << *it << " = " << a << " ";err(++it, args...);
+ }
+ template<class T1, class T2>
+ ostream &operator <<(ostream &os, pair<T1,T2>&p) {
+  os<<"{"<<p.first<<", "<<p.second<<"} ";
+  return os;
+ }
+#define dbg2(args...) { string _s = #args; replace(_s.begin(), _s.end(), ',', ' '); stringstream _ss(_s); istream_iterator<string> _it(_ss); err(_it, args); }
 #else
 #define dbg(x) ;
 #define infile ;
 #define outfile ;
 #define test_handle(T) T = 1
+#define dbg2(args...) ;
 #endif
 //Use -DCOMEDIANS in compiler flag in others tab, or remove ifdef
 mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
