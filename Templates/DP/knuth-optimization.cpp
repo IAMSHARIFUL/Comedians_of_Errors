@@ -1,3 +1,4 @@
+suf cond: quadrangle and C[b][c]<=C[a][d]
 int solve() {
     int N;
     ... // read N and input
