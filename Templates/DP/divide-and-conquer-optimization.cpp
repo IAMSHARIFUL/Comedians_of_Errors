@@ -1,3 +1,5 @@
+dp[i][j]=min{dp[i-1][k]+c[k][j]} a[i][j]<=a[i][j+1]
+suf condition: C[a][c]+C[b][d]<=C[a][d]+C[b][c] a<=b<=c<=d
 int m, n;
 vector<long long> dp_before(n), dp_cur(n);
 long long C(int i, int j);
